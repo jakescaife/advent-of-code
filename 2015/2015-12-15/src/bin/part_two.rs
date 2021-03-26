@@ -10,9 +10,9 @@ fn solve_puzzle(input: &str) -> i32 {
     let ingredients: Vec<_> = input.lines().map(Ingredient::from).collect();
     let mut optimal = i32::MIN;
 
-    for x in 0..100 {
-        for y in 0..100 - x {
-            for z in 0..100 - x - y {
+    for x in 0..=100 {
+        for y in 0..=100 - x {
+            for z in 0..=100 - x - y {
                 let combination = ingredients[0] * x
                     + ingredients[1] * y
                     + ingredients[2] * z
@@ -86,7 +86,7 @@ mod tests {
         let ingredients: Vec<_> = data.lines().map(Ingredient::from).collect();
         let mut optimal = i32::MIN;
 
-        for x in 0..100 {
+        for x in 0..=100 {
             let combination = ingredients[0] * x + ingredients[1] * (100 - x);
 
             if combination.4 == 500 {
