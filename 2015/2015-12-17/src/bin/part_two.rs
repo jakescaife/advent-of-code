@@ -6,49 +6,27 @@ fn main() {
     println!("AOC 2015-17 Part Two: {}", puzzle_solution);
 }
 
-fn solve_puzzle(input: &str) -> u32 {
-    Combinations::total(150, input)
+fn solve_puzzle(input: &str) -> i32 {
+    let containers: Vec<i32> = input.lines().map(|x| x.parse().unwrap()).collect();
+    minimum_containers(150, &containers)
 }
 
-struct Combinations {
-    best: u32,
-    count: u32,
+fn minimum_containers(target: i32, containers: &[i32]) -> i32 {
+    (0..)
+        .map(|x| combinations(target, containers, x))
+        .find(|&x| x != 0)
+        .unwrap()
 }
 
-impl Combinations {
-    fn total(target: u32, containers: &str) -> u32 {
-        let mut containers: Vec<u32> = containers.lines().map(|x| x.parse().unwrap()).collect();
-        containers.sort_unstable();
-
-        let mut combinations = Self {
-            best: u32::MAX,
-            count: 0,
-        };
-
-        combinations.generate(&containers, target, 1);
-        combinations.count
+fn combinations(target: i32, containers: &[i32], depth: usize) -> i32 {
+    if target == 0 {
+        return 1;
+    } else if target < 0 || containers.is_empty() || depth == 0 {
+        return 0;
     }
 
-    fn generate(&mut self, containers: &[u32], target: u32, depth: u32) {
-        for (i, x) in containers.iter().enumerate() {
-            match target.checked_sub(*x) {
-                Some(x) if x == 0 => self.increment(depth),
-                Some(x) => self.generate(&containers[i + 1..], x, depth + 1),
-                None => return,
-            }
-        }
-    }
-
-    fn increment(&mut self, depth: u32) {
-        if depth > self.best {
-            return;
-        } else if depth < self.best {
-            self.best = depth;
-            self.count = 0;
-        }
-
-        self.count += 1
-    }
+    let (x, tail) = containers.split_first().unwrap();
+    combinations(target - x, tail, depth - 1) + combinations(target, tail, depth)
 }
 
 #[cfg(test)]
@@ -57,6 +35,6 @@ mod tests {
 
     #[test]
     fn example_solutions() {
-        assert_eq!(3, Combinations::total(25, "20\n15\n10\n5\n5"));
+        assert_eq!(3, minimum_containers(25, &[5, 5, 10, 15, 20]));
     }
 }
