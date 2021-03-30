@@ -6,23 +6,20 @@ fn main() {
     println!("AOC 2015-17 Part One: {}", puzzle_solution);
 }
 
-fn solve_puzzle(input: &str) -> u32 {
-    let mut containers: Vec<u32> = input.lines().map(|x| x.parse().unwrap()).collect();
-    containers.sort_unstable();
-    combinations(&containers, 150)
+fn solve_puzzle(input: &str) -> i32 {
+    let containers: Vec<i32> = input.lines().map(|x| x.parse().unwrap()).collect();
+    combinations(150, &containers)
 }
 
-fn combinations(containers: &[u32], target: u32) -> u32 {
-    let mut total = 0;
-    for (i, x) in containers.iter().enumerate() {
-        total += match target.checked_sub(*x) {
-            Some(x) if x == 0 => 1,
-            Some(x) => combinations(&containers[i + 1..], x),
-            None => break,
-        }
+fn combinations(target: i32, containers: &[i32]) -> i32 {
+    if target == 0 {
+        return 1;
+    } else if target < 0 || containers.is_empty() {
+        return 0;
     }
 
-    total
+    let (x, tail) = containers.split_first().unwrap();
+    combinations(target - x, tail) + combinations(target, tail)
 }
 
 #[cfg(test)]
@@ -31,7 +28,6 @@ mod tests {
 
     #[test]
     fn example_solutions() {
-        let containers = vec![5, 5, 10, 15, 20];
-        assert_eq!(4, combinations(&containers, 25));
+        assert_eq!(4, combinations(25, &[5, 5, 10, 15, 20]));
     }
 }
