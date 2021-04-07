@@ -45,6 +45,43 @@ impl Computer {
     }
 }
 
+impl From<&str> for Computer {
+    fn from(s: &str) -> Self {
+        Self {
+            memory: Memory::default(),
+            counter: InstructionCounter::default(),
+            instructions: s.lines().map(Instruction::from).collect(),
+        }
+    }
+}
+
+#[derive(Default)]
+struct Memory {
+    registers: HashMap<char, usize>,
+}
+
+impl Memory {
+    fn half(&mut self, register: char) {
+        *self.register(register) /= 2;
+    }
+
+    fn triple(&mut self, register: char) {
+        *self.register(register) *= 3;
+    }
+
+    fn increment(&mut self, register: char) {
+        *self.register(register) += 1;
+    }
+
+    fn register(&mut self, register: char) -> &mut usize {
+        self.registers.entry(register).or_insert(0)
+    }
+
+    fn value(&self, register: char) -> Option<usize> {
+        self.registers.get(&register).copied()
+    }
+}
+
 #[derive(Default)]
 struct InstructionCounter {
     counter: usize,
@@ -80,43 +117,6 @@ impl std::ops::Deref for InstructionCounter {
     type Target = usize;
     fn deref(&self) -> &usize {
         &self.counter
-    }
-}
-
-impl From<&str> for Computer {
-    fn from(s: &str) -> Self {
-        Self {
-            memory: Memory::default(),
-            counter: InstructionCounter::default(),
-            instructions: s.lines().map(Instruction::from).collect(),
-        }
-    }
-}
-
-#[derive(Default)]
-struct Memory {
-    registers: HashMap<char, usize>,
-}
-
-impl Memory {
-    fn half(&mut self, register: char) {
-        *self.register(register) /= 2;
-    }
-
-    fn triple(&mut self, register: char) {
-        *self.register(register) *= 3;
-    }
-
-    fn increment(&mut self, register: char) {
-        *self.register(register) += 1;
-    }
-
-    fn register(&mut self, register: char) -> &mut usize {
-        self.registers.entry(register).or_insert(0)
-    }
-
-    fn value(&self, register: char) -> Option<usize> {
-        self.registers.get(&register).copied()
     }
 }
 
