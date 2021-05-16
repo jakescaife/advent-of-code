@@ -1,17 +1,17 @@
 fn main() {
-    let puzzle_solution = std::fs::read_to_string("input.txt")
-        .map(|input| solve_puzzle(&input))
-        .expect("Error while reading puzzle input file.");
-
-    println!("AOC 2015-02 Part One: {}", puzzle_solution);
+    let input = std::fs::read_to_string("input.txt").unwrap();
+    println!("AOC 2015-02 Part One: {}", solve_puzzle(&input));
 }
 
-fn solve_puzzle(input: &str) -> u32 {
-    input.lines().map(|x| calculate_paper(x)).sum()
+fn solve_puzzle(input: &str) -> usize {
+    input.lines().map(calculate).sum()
 }
 
-fn calculate_paper(s: &str) -> u32 {
-    let mut dimensions: Vec<u32> = s.split('x').map(|x| x.parse().unwrap()).collect();
+fn calculate(present: &str) -> usize {
+    let mut dimensions: Vec<usize> = present.split('x')
+        .map(|x| x.parse().unwrap())
+        .collect();
+
     dimensions.sort_unstable();
 
     3 * dimensions[0] * dimensions[1]
@@ -25,7 +25,7 @@ mod tests {
 
     #[test]
     fn example_solutions() {
-        assert_eq!(58, calculate_paper("2x3x4"));
-        assert_eq!(43, calculate_paper("1x1x10"));
+        assert_eq!(58, calculate("2x3x4"));
+        assert_eq!(43, calculate("1x1x10"));
     }
 }

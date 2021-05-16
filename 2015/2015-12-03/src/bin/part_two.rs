@@ -1,42 +1,29 @@
 use std::collections::HashSet;
 
 fn main() {
-    let puzzle_solution = std::fs::read_to_string("input.txt")
-        .map(|input| solve_puzzle(&input))
-        .expect("Error while reading puzzle input file.");
-
-    println!("AOC 2015-03 Part Two: {}", puzzle_solution);
+    let input = std::fs::read_to_string("input.txt").unwrap();
+    println!("AOC 2015-03 Part Two: {}", solve_puzzle(&input));
 }
 
 type Position = (i32, i32);
 
 fn solve_puzzle(input: &str) -> usize {
-    let santa = input
-        .chars()
-        .step_by(2)
-        .scan((0, 0), |s, x| Some(next(s, x)));
+    let route = |x| input.chars().skip(x).step_by(2)
+        .scan((0, 0), |s, x| { *s = next_house(s, x); Some(*s) });
 
-    let robot = input
-        .chars()
-        .skip(1)
-        .step_by(2)
-        .scan((0, 0), |s, x| Some(next(s, x)));
-
-    let visited_houses: HashSet<_> = santa.chain(robot).chain(std::iter::once((0, 0))).collect();
-
+    let mut visited_houses: HashSet<_> = route(0).chain(route(1)).collect();
+    visited_houses.insert((0, 0));
     visited_houses.len()
 }
 
-fn next(position: &mut Position, direction: char) -> Position {
+fn next_house(position: &Position, direction: char) -> Position {
     match direction {
-        '^' => position.0 += 1,
-        'v' => position.0 -= 1,
-        '>' => position.1 += 1,
-        '<' => position.1 -= 1,
-        _ => panic!("Unexpected direction."),
+        '^' => (position.0 + 1, position.1),
+        'v' => (position.0 - 1, position.1),
+        '>' => (position.0, position.1 + 1),
+        '<' => (position.0, position.1 - 1),
+        _ => panic!("Movement direction unrecognised"),
     }
-
-    *position
 }
 
 #[cfg(test)]
