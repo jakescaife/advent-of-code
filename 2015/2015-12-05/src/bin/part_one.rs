@@ -1,30 +1,26 @@
 fn main() {
-    let puzzle_solution = std::fs::read_to_string("input.txt")
-        .map(|input| solve_puzzle(&input))
-        .expect("Error while reading puzzle input file.");
-
-    println!("AOC 2015-05 Part One: {}", puzzle_solution);
+    let input = std::fs::read_to_string("input.txt").unwrap();
+    println!("AOC 2015-05 Part One: {}", solve_puzzle(&input));
 }
 
 fn solve_puzzle(input: &str) -> usize {
-    input
-        .lines()
-        .filter(|x| three_vowels(x))
-        .filter(|x| repeated_letter(x))
-        .filter(|x| unwanted_strings(x))
+    input.lines()
+        .filter(|x| vowels(x) >= 3)
+        .filter(|x| repeat(x))
+        .filter(|x| !unwanted(x))
         .count()
 }
 
-fn three_vowels(word: &str) -> bool {
-    word.chars().filter(|&x| "aeiou".contains(x)).count() > 2
+fn vowels(word: &str) -> usize {
+    word.chars().filter(|x| "aeiou".contains(*x)).count()
 }
 
-fn repeated_letter(word: &str) -> bool {
-    word.chars().zip(word.chars().skip(1)).any(|x| x.0 == x.1)
+fn repeat(word: &str) -> bool {
+    word.as_bytes().windows(2).any(|x| x[0] == x[1])
 }
 
-fn unwanted_strings(word: &str) -> bool {
-    ["ab", "cd", "pq", "xy"].iter().all(|x| !word.contains(x))
+fn unwanted(word: &str) -> bool {
+    ["ab", "cd", "pq", "xy"].iter().any(|x| word.contains(x))
 }
 
 #[cfg(test)]
