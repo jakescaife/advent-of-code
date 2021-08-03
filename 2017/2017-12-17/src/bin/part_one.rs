@@ -9,11 +9,11 @@ fn solve_puzzle(input: &str) -> usize {
     let mut index = 0;
 
     for length in 1..2018 {
-        index = (index + steps + 1) % length;
-        buffer.insert(index + 1, length);
+        index = (index + steps) % length + 1;
+        buffer.insert(index, length);
     }
 
-    buffer[index + 2]
+    buffer[index + 1]
 }
 
 #[cfg(test)]
